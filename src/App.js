@@ -1,26 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Card, Chart, Country } from './components';
+import classes from './App.module.css';
+import { fetchApi } from './api/api-fetch';
+import image from './images/image.png';
+class App extends React.Component {
+	state = {
+		data: {},
+		country: false
+	};
+	async componentDidMount() {
+		const data = await fetchApi('g');
+		this.setState({ data });
+	}
+	changeCountry = async (value) => {
+		if (value === 'g') {
+			this.setState({ country: false });
+		} else {
+			this.setState({ country: true });
+		}
+		const data = await fetchApi(value);
+		this.setState({ data });
+	};
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	render() {
+		return (
+			<div className={classes.container}>
+				<img alt="corona app" className={classes.image} src={image} />
+				<Card data={this.state.data} />
+				<Country onChangeCountry={(e) => this.changeCountry(e)} />
+				<Chart data={this.state.data} daily={this.state.country} />
+			</div>
+		);
+	}
 }
 
 export default App;
